@@ -1,3 +1,5 @@
+import { showNotification } from "@mantine/notifications"
+
 export function loginToJiraServer({
   onSuccess,
   loginOptions,
@@ -13,7 +15,51 @@ export function loginToJiraServer({
       ...loginOptions,
     }),
   }).then((response) => {
+    if (response.status === 401) {
+      return showNotification({
+        title: "Wrong Password or username",
+        message: "Please check your username or password 🤥",
+        styles: (theme) => ({
+          root: {
+            backgroundColor: theme.colors.red[6],
+            borderColor: theme.colors.red[6],
+
+            "&::before": { backgroundColor: theme.white },
+          },
+
+          title: { color: theme.white },
+          description: { color: theme.white },
+          closeButton: {
+            color: theme.white,
+            "&:hover": { backgroundColor: theme.colors.blue[7] },
+          },
+        }),
+      })
+    }
+    if (response.status === 403) {
+      return showNotification({
+        title: "Wrong URL",
+        message:
+          "Please check your URL it should be in this form : localhost.. 🤥",
+        styles: (theme) => ({
+          root: {
+            backgroundColor: theme.colors.red[6],
+            borderColor: theme.colors.red[6],
+
+            "&::before": { backgroundColor: theme.white },
+          },
+
+          title: { color: theme.white },
+          description: { color: theme.white },
+          closeButton: {
+            color: theme.white,
+            "&:hover": { backgroundColor: theme.colors.blue[7] },
+          },
+        }),
+      })
+    }
     if (response.ok) onSuccess()
+    return () => {}
   })
 
   // EXEMPLE
